@@ -1,0 +1,73 @@
+@startuml
+skinparam style strictuml
+skinparam classAttributeIconSize 0
+
+package "Capa de Excepciones" {
+    class GICException extends Exception
+    class ValidationError extends GICException
+    class PersistenceError extends GICException
+}
+
+package "Modelo de Datos" {
+    abstract class Cliente {
+        - _id_cliente: String
+        - _nombre: String
+        - _email: String
+        - _telefono: String
+        - _direccion: String
+        --
+        + {abstract} obtener_perfil(): String
+        + {static} validar_email(email: String): void
+        + {static} validar_telefono(tel: String): void
+        --
+        ' Métodos Especiales
+        + __str__(): String
+        + __eq__(other: Cliente): Boolean
+        ' Getters/Setters Encapsulados (Properties)
+        + nombre(): String
+        + nombre(valor: String): void
+    }
+
+    class ClienteRegular {
+        ' No tiene atributos extra, solo hereda comportamiento
+        + obtener_perfil(): String
+    }
+
+    class ClientePremium {
+        - _descuento: Float = 0.30
+        + obtener_perfil(): String
+        + aplicar_descuento(monto: Float): Float
+    }
+
+    class ClienteCorporativo {
+        - _ejecutivo_asignado: String
+        - _razon_social: String
+        + obtener_perfil(): String
+        + contactar_ejecutivo(): String
+    }
+
+    Cliente <|-- ClienteRegular
+    Cliente <|-- ClientePremium
+    Cliente <|-- ClienteCorporativo
+}
+
+package "Persistencia y Lógica" {
+    class GestorClientes {
+        - _lista_clientes: List<Cliente>
+        - _archivo_json: String
+        --
+        + agregar_cliente(c: Cliente): void
+        + eliminar_cliente(id: String): void
+        + actualizar_cliente(id: String, nuevos_datos: Dict): void
+        + buscar_cliente(id: String): Cliente
+        + listar_todos(): List<Cliente>
+        --
+        + guardar_en_json(): void
+        + cargar_desde_json(): void
+    }
+    
+    note right of GestorClientes : Orchesta la lógica y\nmaneja I/O con JSON
+}
+
+GestorClientes "1" *-- "0..*" Cliente : contiene >
+@enduml
