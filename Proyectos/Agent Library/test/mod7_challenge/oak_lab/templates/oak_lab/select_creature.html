@@ -1,0 +1,174 @@
+{% extends 'oak_lab/base.html' %}
+
+{% block title %}Elegir Criatura - Laboratorio Oak{% endblock %}
+
+{% block content %}
+<div class="stepper">
+    <div class="step active">1. Criatura</div>
+    <div class="step">2. Horario</div>
+    <div class="step">3. Confirmar</div>
+</div>
+
+<h2 style="margin-bottom: 3rem;">¡Elige a tu compañero inicial!</h2>
+
+<div class="creature-grid">
+    {% for creature in creatures %}
+        <div class="creature-card {{ creature.type }}" onclick="triggerGlow(this, '{{ creature.type }}')">
+            <div class="creature-image-container">
+                <img src="{{ creature.image.url }}" alt="{{ creature.name }}" class="creature-img">
+            </div>
+            <div class="creature-info">
+                <h3>{{ creature.name }}</h3>
+                <span class="badge badge-{{ creature.type }}">{{ creature.type|capfirst }}</span>
+                <p>{{ creature.description }}</p>
+                <form action="{% url 'select_schedule' %}" method="get">
+                    <input type="hidden" name="creature_id" value="{{ creature.id }}">
+                    <button type="submit" class="btn btn-primary">Elegir a {{ creature.name }}</button>
+                </form>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<style>
+    .stepper {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    .step {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        background: #e2e8f0;
+        color: #718096;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+    .step.active {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .creature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+    }
+
+    .creature-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex;
+        flex-direction: column;
+        border: 2px solid transparent;
+        position: relative;
+    }
+
+    .creature-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Glow Animations */
+    @keyframes glow-fuego {
+        0% { box-shadow: 0 0 5px #ff4d4d; }
+        50% { box-shadow: 0 0 40px #ff4d4d, 0 0 60px #ff8c00; }
+        100% { box-shadow: 0 0 5px #ff4d4d; }
+    }
+
+    @keyframes glow-planta {
+        0% { box-shadow: 0 0 5px #48bb78; }
+        50% { box-shadow: 0 0 40px #48bb78, 0 0 60px #81e6d9; }
+        100% { box-shadow: 0 0 5px #48bb78; }
+    }
+
+    @keyframes glow-agua {
+        0% { box-shadow: 0 0 5px #4299e1; }
+        50% { box-shadow: 0 0 40px #4299e1, 0 0 60px #63b3ed; }
+        100% { box-shadow: 0 0 5px #4299e1; }
+    }
+
+    .anim-glow-fuego { animation: glow-fuego 0.8s ease-in-out; }
+    .anim-glow-planta { animation: glow-planta 0.8s ease-in-out; }
+    .anim-glow-agua { animation: glow-agua 0.8s ease-in-out; }
+
+    .creature-image-container {
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8fafc;
+        padding: 1rem;
+        transition: transform 0.3s ease;
+    }
+
+    .creature-img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .creature-card:hover .creature-image-container {
+        transform: scale(1.1);
+    }
+
+    .creature-card.fuego:hover { border-color: var(--primary-color); }
+    .creature-card.planta:hover { border-color: var(--secondary-color); }
+    .creature-card.agua:hover { border-color: var(--accent-color); }
+
+
+    .creature-info {
+        padding: 1.5rem;
+        text-align: center;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .creature-info h3 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 0.2rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        color: white;
+    }
+
+    .badge-fuego { background-color: var(--primary-color); }
+    .badge-planta { background-color: var(--secondary-color); }
+    .badge-agua { background-color: var(--accent-color); }
+
+    .creature-info p {
+        font-size: 0.95rem;
+        color: #4a5568;
+        margin-bottom: 1.5rem;
+        flex: 1;
+    }
+</style>
+
+<script>
+    function triggerGlow(card, type) {
+        const animClass = `anim-glow-${type}`;
+        card.classList.remove(animClass);
+        // Force reflow
+        void card.offsetWidth;
+        card.classList.add(animClass);
+        
+        // Remove class after animation ends to allow re-triggering
+        setTimeout(() => {
+            card.classList.remove(animClass);
+        }, 800);
+    }
+</script>
+{% endblock %}

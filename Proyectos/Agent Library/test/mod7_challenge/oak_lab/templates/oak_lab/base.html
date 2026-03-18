@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Laboratorio del Profesor Oak{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'oak_lab/css/index.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="{% url 'login' %}" class="brand">🧪 Laboratorio Oak</a>
+            <div class="nav-links">
+                {% if user.is_authenticated %}
+                    <span class="welcome-text">Hola, <strong>{{ user.username }}</strong></span>
+                    <a href="{% url 'select_creature' %}">Nueva Reserva</a>
+                    <a href="{% url 'my_reservation' %}">Mi Reserva</a>
+                    <a href="{% url 'logout' %}" class="btn btn-outline">Cerrar Sesión</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Iniciar Sesión</a>
+                    <a href="{% url 'register' %}" class="btn btn-primary">Registrarse</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="container main-content">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Laboratorio Pokémon de Pueblo Paleta</p>
+    </footer>
+</body>
+</html>

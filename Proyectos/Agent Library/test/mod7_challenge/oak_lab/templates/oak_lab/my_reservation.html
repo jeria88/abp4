@@ -1,0 +1,124 @@
+{% extends 'oak_lab/base.html' %}
+
+{% block title %}Mi Reserva - Laboratorio Oak{% endblock %}
+
+{% block content %}
+<div class="reservation-view">
+    <h2>Tu Cita en el Laboratorio</h2>
+
+    {% if reservation %}
+        <div class="card reservation-card">
+            <div class="creature-display">
+                <img src="{{ reservation.creature.image.url }}" alt="{{ reservation.creature.name }}" class="main-image">
+                <h3>{{ reservation.creature.name }}</h3>
+                <span class="badge badge-{{ reservation.creature.type }}">{{ reservation.creature.type|capfirst }}</span>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="label">📅 Día</span>
+                    <span class="value">{{ reservation.schedule.day }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">⏰ Hora</span>
+                    <span class="value">{{ reservation.schedule.start_time|time:"H:i" }} - {{ reservation.schedule.end_time|time:"H:i" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">📝 Estado</span>
+                    <span class="value" style="color: var(--secondary-color);">Confirmada ✅</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">🗓️ Agendada el</span>
+                    <span class="value">{{ reservation.created_at|date:"d/m/Y H:i" }}</span>
+                </div>
+            </div>
+
+            <div class="instructions">
+                <p>Recuerda presentarte puntualmente en el laboratorio de Pueblo Paleta. ¡El Profesor Oak y tu nuevo compañero te esperan!</p>
+            </div>
+        </div>
+    {% else %}
+        <div class="no-reservation">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🎒</div>
+            <p>Aún no tienes una reserva para tu criatura inicial.</p>
+            <a href="{% url 'select_creature' %}" class="btn btn-primary" style="margin-top: 1.5rem;">Agendar Cita Ahora</a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .reservation-view {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .reservation-card {
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        border-left: 10px solid var(--accent-color);
+    }
+
+    .creature-display {
+        text-align: center;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 1.5rem;
+    }
+
+    .main-image {
+        width: 150px;
+        height: 150px;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto 1rem;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+    }
+
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .label {
+        color: #718096;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-color);
+    }
+
+    .instructions {
+        background: #f8fafc;
+        padding: 1.5rem;
+        border-radius: 10px;
+        font-style: italic;
+        color: #4a5568;
+        border-left: 4px solid var(--warning-color);
+    }
+
+    .no-reservation {
+        text-align: center;
+        padding: 5rem 0;
+        background: white;
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+    }
+
+    .no-reservation p {
+        font-size: 1.2rem;
+        color: #718096;
+    }
+</style>
+{% endblock %}

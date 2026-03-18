@@ -1,0 +1,132 @@
+{% extends 'oak_lab/base.html' %}
+
+{% block title %}Elegir Horario - Laboratorio Oak{% endblock %}
+
+{% block content %}
+<div class="stepper">
+    <div class="step completed">1. Criatura</div>
+    <div class="step active">2. Horario</div>
+    <div class="step">3. Confirmar</div>
+</div>
+
+<div class="selection-summary">
+    <p>Has elegido a: <strong>{{ creature.name }}</strong> {{ creature.image_emoji }}</p>
+</div>
+
+<h2 style="margin-bottom: 2rem;">¿Cuándo vendrás al laboratorio?</h2>
+
+<div class="schedule-list">
+    {% regroup schedules by day as day_list %}
+    {% for day in day_list %}
+        <div class="day-group">
+            <h3>{{ day.grouper }}</h3>
+            <div class="slots-grid">
+                {% for slot in day.list %}
+                    <div class="slot-card">
+                        <div class="slot-time">{{ slot.start_time|time:"H:i" }} - {{ slot.end_time|time:"H:i" }}</div>
+                        <div class="slot-capacity">
+                            <span class="capacity-count">{{ slot.remaining_slots }}</span> cupos disponibles
+                        </div>
+                        <form action="{% url 'confirm_reservation' %}" method="get">
+                            <input type="hidden" name="creature_id" value="{{ creature.id }}">
+                            <input type="hidden" name="schedule_id" value="{{ slot.id }}">
+                            <button type="submit" class="btn btn-outline" style="width: 100%; margin-top: 1rem;">Seleccionar</button>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% empty %}
+        <p style="text-align: center; font-size: 1.2rem; color: #718096;">Lo sentimos, no hay horarios disponibles esta semana. 😔</p>
+    {% endfor %}
+</div>
+
+<style>
+    .stepper {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+    .step {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        background: #e2e8f0;
+        color: #718096;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+    .step.active {
+        background: var(--primary-color);
+        color: white;
+    }
+    .step.completed {
+        background: var(--secondary-color);
+        color: white;
+    }
+
+    .selection-summary {
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 1.2rem;
+        background: white;
+        padding: 1rem;
+        border-radius: 50px;
+        display: inline-block;
+        left: 50%;
+        transform: translateX(-50%);
+        position: relative;
+        box-shadow: var(--shadow);
+    }
+
+    .day-group {
+        margin-bottom: 3rem;
+    }
+
+    .day-group h3 {
+        font-size: 1.5rem;
+        color: var(--text-color);
+        border-bottom: 3px solid var(--accent-color);
+        display: inline-block;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.3rem;
+    }
+
+    .slots-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .slot-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .slot-card:hover {
+        transform: scale(1.05);
+    }
+
+    .slot-time {
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .slot-capacity {
+        font-size: 0.9rem;
+        color: #718096;
+    }
+
+    .capacity-count {
+        color: var(--secondary-color);
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+</style>
+{% endblock %}

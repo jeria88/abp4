@@ -1,0 +1,142 @@
+{% extends 'oak_lab/base.html' %}
+
+{% block title %}Confirmar Reserva - Laboratorio Oak{% endblock %}
+
+{% block content %}
+<div class="stepper">
+    <div class="step completed">1. Criatura</div>
+    <div class="step completed">2. Horario</div>
+    <div class="step active">3. Confirmar</div>
+</div>
+
+<h2 style="margin-bottom: 2rem;">Revisa tu aventura</h2>
+
+<div class="confirmation-card">
+    <div class="summary-details">
+        <div class="detail-item">
+            <span class="label">Entrenador:</span>
+            <span class="value">{{ user.username }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="label">Compañero:</span>
+            <div class="creature-mini">
+                <img src="{{ creature.image.url }}" alt="{{ creature.name }}" class="mini-image">
+                <span class="value">{{ creature.name }} ({{ creature.type|capfirst }})</span>
+            </div>
+        </div>
+        <div class="detail-item">
+            <span class="label">Cita:</span>
+            <span class="value">{{ schedule.day }} a las {{ schedule.start_time|time:"H:i" }}</span>
+        </div>
+    </div>
+
+    <form method="post" style="margin-top: 2rem;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; font-size: 1.2rem;">
+            🎯 Confirmar Reserva
+        </button>
+    </form>
+    
+    <div style="text-align: center; margin-top: 1rem;">
+        <a href="{% url 'select_schedule' %}?creature_id={{ creature.id }}" style="color: #a0aec0; text-decoration: none; font-size: 0.9rem;">
+            ⬅️ Cambiar horario
+        </a>
+    </div>
+</div>
+
+<style>
+    .stepper {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    .step {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        background: #e2e8f0;
+        color: #718096;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+    .step.active {
+        background: var(--primary-color);
+        color: white;
+    }
+    .step.completed {
+        background: var(--secondary-color);
+        color: white;
+    }
+
+    .confirmation-card {
+        background: white;
+        padding: 3rem;
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        max-width: 600px;
+        margin: 0 auto;
+        border-top: 10px solid var(--warning-color);
+    }
+
+    .summary-details {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .detail-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 1rem;
+        border-bottom: 1px dashed #e2e8f0;
+    }
+
+    .label {
+        font-weight: 700;
+        color: #718096;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+    }
+
+    .value {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--text-color);
+    }
+
+    .creature-mini {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .mini-image {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+    }
+
+    .btn-lg {
+        padding: 1.2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-lg::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: rgba(255, 255, 255, 0.2);
+        transform: rotate(45deg);
+        transition: 0.5s;
+    }
+
+    .btn-lg:hover::after {
+        left: 120%;
+    }
+</style>
+{% endblock %}
